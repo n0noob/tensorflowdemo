@@ -24,6 +24,7 @@ if (getUserMediaSupported()) {
 var children = [];
 
 function predictWebcam() {
+
   // Now let's start classifying a frame in the stream.
   model.estimateFaces(video).then(function (predictions) {
     // Remove any highlighting we did previous frame.
@@ -32,6 +33,7 @@ function predictWebcam() {
     }
     children.splice(0);
 
+    
     
     // Now lets loop through predictions and draw them to the live view if
     // they have a high confidence score.
@@ -88,6 +90,7 @@ var model = undefined;
 facemesh.load().then(function (loadedModel) {
   model = loadedModel;
   console.log('Model loaded successfully');
+
   // Show demo section now model is ready to use.
   demosSection.classList.remove('invisible');
 });
@@ -117,8 +120,6 @@ function enableCam(event) {
   });
 }
 
-
-//TEST Function
 function handleCanPlay() {
   console.warn('Video can be played now');
 }

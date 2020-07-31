@@ -51,31 +51,6 @@ function predictWebcam() {
       });
     }
     
-    // console.log('predictions.length: ' + predictions.length);
-    
-    // if (predictions.length > 0) {
-    //   //console.log('Inside predictWebcam');
-    //   for (let i = 0; i < keypoints.length; i++) {
-    //     const x = keypoints[i][0];
-    //     const y = keypoints[i][1];
-
-    //     ctx.beginPath();
-    //     ctx.arc(x, y, 1 /* radius */, 0, 2 * Math.PI);
-    //     ctx.fill();
-    //   }
-    // }
-  
-    //   for (let i = 0; i < predictions.length; i++) {
-    //     const keypoints = predictions[i].scaledMesh;
-  
-    //     // Log facial keypoints.
-    //     for (let i = 0; i < keypoints.length; i++) {
-    //       const [x, y, z] = keypoints[i];
-  
-    //       console.log(`Keypoint ${i}: [${x}, ${y}, ${z}]`);
-    //     }
-    //   }
-    // }
     window.requestAnimationFrame(predictWebcam);
   });
 }

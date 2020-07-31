@@ -1,4 +1,5 @@
 const video = document.getElementById('webcam');
+let canvas = document.getElementById('output');
 const liveView = document.getElementById('liveView');
 const demosSection = document.getElementById('demos');
 const enableWebcamButton = document.getElementById('webcamButton');
@@ -33,42 +34,36 @@ function predictWebcam() {
     }
     children.splice(0);
 
+    console.log('Inside predictWebcam');
+    ctx.drawImage(video, 0, 0, videoWidth, videoHeight, 0, 0, canvas.width, canvas.height);
     
-    
-    // Now lets loop through predictions and draw them to the live view if
-    // they have a high confidence score.
-    // for (let n = 0; n < predictions.length; n++) {
-    //   // If we are over 66% sure we are sure we classified it right, draw it!
-    //   if (predictions[n].score > 0.66) {
-    //     const p = document.createElement('p');
-    //     p.innerText = predictions[n].class  + ' - with ' 
-    //         + Math.round(parseFloat(predictions[n].score) * 100) 
-    //         + '% confidence.';
-    //     p.style = 'margin-left: ' + predictions[n].bbox[0] + 'px; margin-top: '
-    //         + (predictions[n].bbox[1] - 10) + 'px; width: ' 
-    //         + (predictions[n].bbox[2] - 10) + 'px; top: 0; left: 0;';
+    if(predictions.length > 0) {
+      predictions.forEach(prediction => {
+        const keypoints = prediction.scaledMesh;
+        for (let i = 0; i < keypoints.length; i++) {
+          const x = keypoints[i][0];
+          const y = keypoints[i][1];
 
-    //     const highlighter = document.createElement('div');
-    //     highlighter.setAttribute('class', 'highlighter');
-    //     highlighter.style = 'left: ' + predictions[n].bbox[0] + 'px; top: '
-    //         + predictions[n].bbox[1] + 'px; width: ' 
-    //         + predictions[n].bbox[2] + 'px; height: '
-    //         + predictions[n].bbox[3] + 'px;';
-
-    //     liveView.appendChild(highlighter);
-    //     liveView.appendChild(p);
-    //     children.push(highlighter);
-    //     children.push(p);
-    //   }
-    // }
+          ctx.beginPath();
+          ctx.arc(x, y, 1, 0, 2 * Math.PI);
+          ctx.fill();
+        }
+      });
+    }
     
-    // // Call this function again to keep predicting when the browser is ready.
-    // window.requestAnimationFrame(predictWebcam);
-    
-    console.log('predictions.length: ' + predictions.length);
+    // console.log('predictions.length: ' + predictions.length);
     
     // if (predictions.length > 0) {
     //   //console.log('Inside predictWebcam');
+    //   for (let i = 0; i < keypoints.length; i++) {
+    //     const x = keypoints[i][0];
+    //     const y = keypoints[i][1];
+
+    //     ctx.beginPath();
+    //     ctx.arc(x, y, 1 /* radius */, 0, 2 * Math.PI);
+    //     ctx.fill();
+    //   }
+    // }
   
     //   for (let i = 0; i < predictions.length; i++) {
     //     const keypoints = predictions[i].scaledMesh;
@@ -96,6 +91,26 @@ facemesh.load().then(function (loadedModel) {
 });
 
 
+function handleCanvas() {
+  console.log('Inside handleCanvas');
+  
+  videoWidth = video.videoWidth;
+  videoHeight = video.videoHeight;
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  ctx = canvas.getContext('2d');
+  ctx.translate(canvas.width, 0);
+  ctx.scale(-1, 1);
+  ctx.fillStyle = '#32EEDB';
+  ctx.strokeStyle = '#32EEDB';
+  ctx.lineWidth = 0.5;
+
+  console.log('Done handling canvas');
+  predictWebcam();
+}
+
 
 // Enable the live webcam view and start classification.
 function enableCam(event) {
@@ -115,11 +130,6 @@ function enableCam(event) {
   // Activate the webcam stream.
   navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
     video.srcObject = stream;
-    video.addEventListener('loadeddata', predictWebcam);
-    video.addEventListener('canplay', handleCanPlay);
+    video.addEventListener('loadeddata', handleCanvas);
   });
-}
-
-function handleCanPlay() {
-  console.warn('Video can be played now');
 }
